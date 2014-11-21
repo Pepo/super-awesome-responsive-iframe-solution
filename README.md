@@ -1,4 +1,4 @@
-super-awesome-respnsive-iframe-solution
+super-awesome-responsive-iframe-solution
 =======================================
 
 A responsive iframe solution for a real world project. 
