@@ -7,25 +7,25 @@
     <style type="text/css">
     
     html{
-    	height: 100%;
+        height: 100%;
     }
     
     body{
-    	padding: 0;
-    	margin: 0;
-    	height: 100%;
+        padding: 0;
+        margin: 0;
+        height: 100%;
     }
     
     iframe{
-    	width: 100%;
-    	height: 80%;
-    	border: 0;
+        width: 100%;
+        height: 80%;
+        border: 0;
         width: 70%;
         margin-left: 15%;
     }
     header{
-    	height: 20%;
-    	background-color: #00488b;
+        height: 20%;
+        background-color: #00488b;
     }
     header h1{
         margin:0;
@@ -34,14 +34,58 @@
         margin-left: 1em;
     }
     </style>
+
+    <script>
+
+        function receiveMessage(event) {
+            var message = event.data.split(':');
+            var eventName = message[0];
+            var iframes, len, i = 0;
+            var senderDomains = ['http://localhost:8000'];
+
+            if ( senderDomains.indexOf(event.origin) !== -1 && eventName === 'resize' ) {
+
+                iframes = document.getElementsByTagName('iframe');
+                len = iframes.length;
+                
+                for (; i < len; i++) {
+
+                    if ( ( iframes[i].contentWindow || iframes[i].documentWindow ) == event.source) {
+
+                        iframes[i].style.height = message[1] + "px";
+
+                        return;
+                    }
+
+                }
+            }
+        }
+        
+        if ( window.addEventListener ) {
+            window.addEventListener('message', receiveMessage, false);
+        } 
+        else if (window.attachEvent)  {
+            window.attachEvent('onmessage', receiveMessage);
+        }
+        
+
+    </script>
+
 </head>
 
 <body>
-<header>
-<h1>Super-Awesome-Header</h1>
-</header>
-<iframe src="iframe.html" id="responsive-iframe">
+    <header>
+        <h1>Super-Awesome-Header</h1>
+    </header>
+    <!-- Same Origin iFrame -->
 
-</iframe>
+    <iframe src="iframe.html" id="responsive-iframe" scrolling="no" frameborder="0"></iframe>
+    <!-- 
+    
+    Cross Origin iFrame
+    Start server in directory with: python -m SimpleHTTPServer 8000
+    <iframe src="http://localhost:8000/iframe.html" id="responsive-iframe" scrolling="no" frameborder="0"></iframe>
+    -->
+
 </body>
 </html>

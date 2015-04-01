@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <title>Responsive iFrame</title>
     <style type="text/css">
-   	body,html{
-   		border:0;
-   		padding: 0;
-   		margin: 0;
-   	}
+    body,html{
+      border:0;
+      padding: 0;
+      margin: 0;
+    }
     img{
-    	max-width: 100%;
+      max-width: 100%;
     }
     body{
       padding: 1rem;
@@ -24,14 +24,62 @@
       color: #fff;
     }
     </style>
+
+    <script type="text/javascript">
+
+    var superAwesomeIframe = {};
+
+    superAwesomeIframe.requestAnimFrame = (function(){
+            
+        return  window.requestAnimationFrame       ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame    ||
+                window.oRequestAnimationFrame      ||
+                window.msRequestAnimationFrame     ||
+
+                function( callback ){
+                    window.setTimeout(callback, 1000 / 60);
+                };
+    })();    
+
+    superAwesomeIframe.windowHeight = 0;
+    superAwesomeIframe.htmlElement = document.getElementsByTagName('html')[0];
+    superAwesomeIframe.targetDomain = 'http://localhost';
+
+    superAwesomeIframe.resizeFrame = function (){
+
+        var windowHeight = document.body ? Math.max(document.body.offsetHeight, superAwesomeIframe.htmlElement.offsetHeight) : superAwesomeIframe.htmlElement.offsetHeight ;
+
+        if ( superAwesomeIframe.windowHeight === windowHeight ) {
+
+            superAwesomeIframe.requestAnimFrame.call(window, superAwesomeIframe.resizeFrame);
+
+            return false;
+        }
+
+        superAwesomeIframe.windowHeight = windowHeight;
+
+        try {
+
+            // Same Origin iFrame
+            window.frameElement.style.height = windowHeight + 'px';
+        }
+        catch ( e ) {
+
+            // Cross Origin iFrame
+            window.parent.postMessage('resize:' + windowHeight , superAwesomeIframe.targetDomain);
+        }
+
+        superAwesomeIframe.requestAnimFrame.call(window, superAwesomeIframe.resizeFrame);
+    };
+
+    superAwesomeIframe.requestAnimFrame.call(window, superAwesomeIframe.resizeFrame);
+
+    </script>
+
 </head>
 
 <body>
-
-
-
-
-
 
 <h1>Hello, i am super-awesome-responsive iFrame</h1>
 <h2>My Project-Manager wanted to meet me!</h2>
@@ -65,26 +113,6 @@
 <p>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</p>
 
 <p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-
-<script type="text/javascript">
-$(document).ready(function(){
-
-	$( document ).ready(resizeFrame);
-	$( window ).load(resizeFrame);
-  $( window ).resize(resizeFrame);
-
-});
-
-function resizeFrame(){
-	var windowHeight = $("html").css("height");
-
-	var iFrame = parent.document.getElementById("responsive-iframe");
-	
-  $(iFrame).css("height",windowHeight);
-}
-</script>
 
 </body>
 </html>
